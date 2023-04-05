@@ -34,6 +34,11 @@ def get_mongo_collection():
 st.set_page_config(
     page_title="IP DB",
     page_icon=":mag_right:",
+    menu_items={
+        "Get Help": "https://github.com/Siddhesh-Agarwal/IP-DB/issues",
+        "Report a bug": "https://github.com/Siddhesh-Agarwal/IP-DB/issues",
+        "About": open("./README.md").read(),
+    },
 )
 
 st.title(":mag_right: IP DB")
