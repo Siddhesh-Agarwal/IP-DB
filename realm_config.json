@@ -1,0 +1,9 @@
+{
+    "app_id": "ip-db-aqmqd",
+    "config_version": 20210101,
+    "name": "IP-DB",
+    "location": "US-VA",
+    "provider_region": "aws-us-east-1",
+    "deployment_model": "GLOBAL",
+    "environment": "development"
+}
