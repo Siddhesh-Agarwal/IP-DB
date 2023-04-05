@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "ip-db"
+version = "0.1.0"
+description = "A database for ip-addresses"
+authors = ["Siddhesh Agarwal <siddhesh.agarwal@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "ip_db"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+streamlit = "^1.20.0"
+pymongo = "^4.3.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
