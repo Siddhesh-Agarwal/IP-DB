@@ -1,6 +1,7 @@
 import socket
 
 import pymongo
+import requests
 import streamlit as st
 
 
@@ -12,23 +13,19 @@ def get_domain(url: str) -> str:
 
 @st.cache_resource
 def get_mongo_collection():
-    uri = st.secrets["mongo_uri"]
     # Connect to MongoDB
-    client = pymongo.MongoClient(uri)
-
-    # check if connection is successful
-    try:
-        client.admin.command("ping")
-        # st.success("Connection to MongoDB successful")
-    except:
-        # st.error("Connection to MongoDB failed")
-        return get_mongo_collection()
-
+    client = pymongo.MongoClient(st.secrets["uri"])
     # Create database
     db = client["ipdb"]
     # Create collection
     collection = db["ipdb"]
+    # Return collection
     return collection
+
+
+def get_location(ip_address: str) -> dict:
+    url = requests.get(f"http://ip-api.com/json/{ip_address}")
+    return url.json()
 
 
 st.set_page_config(
@@ -44,10 +41,11 @@ st.set_page_config(
 st.title(":mag_right: IP DB")
 
 tabs = st.tabs(["Add", "Search"])
-collection = get_mongo_collection()
+with st.spinner("Connecting to database..."):
+    collection = get_mongo_collection()
 
 with tabs[0]:
-    url = st.text_input("Enter URL")
+    url = st.text_input("Enter URL").strip()
     if st.button("Find"):
         with st.spinner("Finding IP Address..."):
             # get domain
@@ -68,7 +66,7 @@ with tabs[0]:
 
 with tabs[1]:
     # get IP address
-    ip_address = st.text_input("Enter IP Address")
+    ip_address = st.text_input("Enter IP Address").strip()
     if st.button("Search"):
         if ip_address:
             with st.spinner("Searching..."):
@@ -80,12 +78,16 @@ with tabs[1]:
                     for i in res:
                         count += 1
                         domains.append(i["domain"])
+                    location = get_location(ip_address)
                     st.success(f"IP Address {ip_address} exists {count} times")
                     st.info(
-                        "City, Country, ISP, Organization, Timezone, etc. (Coming Soon!)"
+                        f"**Location:** {location['city']}, {location['country']} ({location['countryCode']})"
                     )
-                    with st.expander("Domains"):
-                        st.write(domains)
+                    if count:
+                        with st.expander("Domains"):
+                            st.write(domains)
+                    with st.expander("Details"):
+                        st.write(location)
                 else:
                     st.error(f"IP Address {ip_address} does not exist")
         else:

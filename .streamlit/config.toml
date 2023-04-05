@@ -1,0 +1,16 @@
+[global]
+disableWatchdogWarning = true
+dataFrameSerialization = "arrow"
+
+[logger]
+level="debug"
+
+[runner]
+magicEnabled = false
+
+[server]
+headless = true
+runOnSave = true
+
+[deprecation]
+showfileUploaderEncoding = false
