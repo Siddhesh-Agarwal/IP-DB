@@ -5,7 +5,7 @@ description = "A database for ip-addresses"
 authors = ["Siddhesh Agarwal <siddhesh.agarwal@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "ip_db"}]
+packages = [{include = "."}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
