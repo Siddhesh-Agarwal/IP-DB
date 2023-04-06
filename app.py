@@ -12,9 +12,9 @@ def get_domain(url: str) -> str:
 
 
 @st.cache_resource
-def get_mongo_collection():
+def get_mongo_collection(uri: str):
     # Connect to MongoDB
-    client = pymongo.MongoClient(st.secrets["uri"])
+    client = pymongo.MongoClient(uri)
     # Create database
     db = client["ipdb"]
     # Create collection
@@ -42,10 +42,13 @@ st.title(":mag_right: IP DB")
 
 tabs = st.tabs(["Add", "Search"])
 with st.spinner("Connecting to database..."):
-    collection = get_mongo_collection()
+    collection = get_mongo_collection(st.secrets["uri"])
 
 with tabs[0]:
-    url = st.text_input("Enter URL").strip()
+    url = st.text_input(
+        label="Enter URL",
+        placeholder="https://www.google.com",
+    ).strip()
     if st.button("Find"):
         with st.spinner("Finding IP Address..."):
             # get domain
@@ -55,13 +58,14 @@ with tabs[0]:
                 ip_address = socket.gethostbyname(domain)
                 # show ip address
                 st.success(ip_address)
-                # check if domain exists
-                if collection.find_one({"domain": domain}):
-                    st.info(f"Domain {domain} already exists in the database")
-                else:
-                    collection.insert_one({"domain": domain, "ip_address": ip_address})
             except socket.gaierror:
                 st.error("Invalid URL")
+        with st.spinner("Checking database..."):
+            # check if domain exists
+            if collection.find_one({"domain": domain}):
+                st.info(f"Domain {domain} already exists in the database")
+            else:
+                collection.insert_one({"domain": domain, "ip_address": ip_address})
 
 
 with tabs[1]:
