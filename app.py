@@ -6,6 +6,7 @@ import streamlit as st
 
 
 def get_domain(url: str) -> str:
+    url = url.lower()
     url = url.replace("https://", "").replace("http://", "").replace("www.", "")
     domain = url.split("/", 1)[0]
     return domain
@@ -60,13 +61,13 @@ with tabs[0]:
                 st.success(ip_address)
             except socket.gaierror:
                 st.error("Invalid URL")
+            
         with st.spinner("Checking database..."):
-            # check if domain exists
-            if collection.find_one({"domain": domain}):
-                st.info(f"Domain already exists in the database")
+            if collection.find_one({"domain": domain, "ip_address": ip_address}):
+                st.info(f"Data already exists in the database")
             else:
                 collection.insert_one({"domain": domain, "ip_address": ip_address})
-                st.info(f"Domain added to the database")
+                st.info(f"Data added to the database")
 
 
 with tabs[1]:
