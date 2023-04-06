@@ -63,9 +63,10 @@ with tabs[0]:
         with st.spinner("Checking database..."):
             # check if domain exists
             if collection.find_one({"domain": domain}):
-                st.info(f"Domain {domain} already exists in the database")
+                st.info(f"Domain already exists in the database")
             else:
                 collection.insert_one({"domain": domain, "ip_address": ip_address})
+                st.info(f"Domain added to the database")
 
 
 with tabs[1]:
