@@ -59,15 +59,18 @@ with tabs[0]:
                 ip_address = socket.gethostbyname(domain)
                 # show ip address
                 st.success(ip_address)
+                with st.spinner("Checking database..."):
+                    if collection.find_one(
+                        {"domain": domain, "ip_address": ip_address}
+                    ):
+                        st.info(f"Data already exists in the database")
+                    else:
+                        collection.insert_one(
+                            {"domain": domain, "ip_address": ip_address}
+                        )
+                        st.info(f"Data added to the database")
             except socket.gaierror:
                 st.error("Invalid URL")
-            
-        with st.spinner("Checking database..."):
-            if collection.find_one({"domain": domain, "ip_address": ip_address}):
-                st.info(f"Data already exists in the database")
-            else:
-                collection.insert_one({"domain": domain, "ip_address": ip_address})
-                st.info(f"Data added to the database")
 
 
 with tabs[1]:
@@ -89,7 +92,9 @@ with tabs[1]:
                     st.info(
                         f"**Location:** {location['city']}, {location['country']} ({location['countryCode']})"
                     )
-                    if count:
+                    if count == 1:
+                        st.info(f"**Domain:** {domains[0]}")
+                    if count > 1:
                         with st.expander("Domains"):
                             st.write(domains)
                     with st.expander("Details"):
