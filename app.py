@@ -58,19 +58,22 @@ with tabs[0]:
                 # get ip address
                 ip_address = socket.gethostbyname(domain)
                 # show ip address
-                st.success(ip_address)
+                st.info(ip_address)
                 with st.spinner("Checking database..."):
-                    if collection.find_one(
-                        {"domain": domain, "ip_address": ip_address}
-                    ):
+                    data = {"domain": domain, "ip_address": ip_address}
+                    if collection.find_one(data):
                         st.info(f"Data already exists in the database")
                     else:
-                        collection.insert_one(
-                            {"domain": domain, "ip_address": ip_address}
-                        )
-                        st.info(f"Data added to the database")
+                        collection.insert_one(data)
+                        st.success(f"Data added to the database")
             except socket.gaierror:
                 st.error("Invalid URL")
+            except Exception as e:
+                st.error(e)
+                st.info(
+                    "Refresh the site. If this problem continues to persist, report this issue [here](https://github.com/Siddhesh-Agarwal/IP-DB/issues)"
+                )
+                st.stop()
 
 
 with tabs[1]:
