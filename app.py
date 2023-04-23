@@ -6,9 +6,8 @@ import streamlit as st
 
 
 def get_domain(url: str) -> str:
-    url = url.lower()
     url = url.replace("https://", "").replace("http://", "").replace("www.", "")
-    domain = url.split("/", 1)[0]
+    domain = url.split("/", 1)[0].lower()
     return domain
 
 
@@ -71,7 +70,7 @@ with tabs[0]:
             except Exception as e:
                 st.error(e)
                 st.info(
-                    "Refresh the site. If this problem continues to persist, report this issue [here](https://github.com/Siddhesh-Agarwal/IP-DB/issues)"
+                    "Refresh the site. If the problem persists, report this issue [here](https://github.com/Siddhesh-Agarwal/IP-DB/issues)"
                 )
                 st.stop()
 
@@ -85,11 +84,8 @@ with tabs[1]:
                 # number of times ip_address exists
                 res = collection.find({"ip_address": ip_address})
                 if res:
-                    count = 0
-                    domains = []
-                    for i in res:
-                        count += 1
-                        domains.append(i["domain"])
+                    domains = list(set(i["domain"] for i in res))
+                    count = len(domains)
                     location = get_location(ip_address)
                     st.success(f"IP Address {ip_address} exists {count} times")
                     st.info(
@@ -98,9 +94,9 @@ with tabs[1]:
                     if count == 1:
                         st.info(f"**Domain:** {domains[0]}")
                     if count > 1:
-                        with st.expander("Domains"):
+                        with st.expander("All domains"):
                             st.write(domains)
-                    with st.expander("Details"):
+                    with st.expander("More details"):
                         st.write(location)
                 else:
                     st.error(f"IP Address {ip_address} does not exist")
