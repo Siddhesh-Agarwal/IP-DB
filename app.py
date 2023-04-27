@@ -64,11 +64,11 @@ with tabs[0]:
                         st.info(f"Data already exists in the database")
                     else:
                         collection.insert_one(data)
-                        st.success(f"Data added to the database")
+                        st.success(f"Data added to the database", icon="✅")
             except socket.gaierror:
-                st.error("Invalid URL")
+                st.error("Invalid URL", icon="❌")
             except Exception as e:
-                st.error(e)
+                st.error(e, icon="❌")
                 st.info(
                     "Refresh the site. If the problem persists, report this issue [here](https://github.com/Siddhesh-Agarwal/IP-DB/issues)"
                 )
@@ -87,18 +87,21 @@ with tabs[1]:
                     domains = list(set(i["domain"] for i in res))
                     count = len(domains)
                     location = get_location(ip_address)
-                    st.success(f"IP Address {ip_address} exists {count} times")
+                    st.success(
+                        f"IP Address {ip_address} exists {count} times", icon="ℹ️"
+                    )
                     st.info(
-                        f"**Location:** {location['city']}, {location['country']} ({location['countryCode']})"
+                        body=f"**Location:** {location['city']}, {location['country']} ({location['countryCode']})",
+                        icon="📌",
                     )
                     if count == 1:
-                        st.info(f"**Domain:** {domains[0]}")
+                        st.info(f"**Domain:** {domains[0]}", icon="🔗")
                     if count > 1:
                         with st.expander("All domains"):
                             st.write(domains)
                     with st.expander("More details"):
                         st.write(location)
                 else:
-                    st.error(f"IP Address {ip_address} does not exist")
+                    st.error(f"IP Address {ip_address} does not exist", icon="❌")
         else:
             st.error("Please enter an IP Address")
